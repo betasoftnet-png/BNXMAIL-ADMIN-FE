@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Ban, LogOut, CheckCircle, XCircle, MoreVertical, Loader2, UserX } from 'lucide-react';
+import { Search, Ban, LogOut, CheckCircle, XCircle, MoreVertical, Loader2, UserX, Scale } from 'lucide-react';
 import { motion } from 'framer-motion';
 import adminApi from '../api';
+import CaseReviewModal from '../components/CaseReviewModal';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -10,6 +11,7 @@ const Users = () => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [actionLoading, setActionLoading] = useState(null);
+  const [reviewUserId, setReviewUserId] = useState(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -56,6 +58,14 @@ const Users = () => {
 
   return (
     <div className="p-8">
+      {/* Case Review Modal */}
+      <CaseReviewModal 
+        userId={reviewUserId} 
+        isOpen={!!reviewUserId} 
+        onClose={() => setReviewUserId(null)}
+        onDecisionMade={fetchUsers}
+      />
+
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
@@ -135,6 +145,16 @@ const Users = () => {
                       {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="px-6 py-4 text-right space-x-2">
+                      {!user.active && (
+                        <button 
+                          onClick={() => setReviewUserId(user.id)}
+                          className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors"
+                        >
+                          <Scale className="w-3 h-3 mr-1" />
+                          Review Case
+                        </button>
+                      )}
+                      
                       <button 
                         onClick={() => handleToggleStatus(user.id)}
                         disabled={actionLoading === `status-${user.id}`}

@@ -34,7 +34,13 @@ const adminApi = {
     api.put(`/users/${userId}/status`),
     
   forceLogoutUser: (userId) => 
-    api.post(`/users/${userId}/logout`)
+    api.post(`/users/${userId}/logout`),
+
+  getAbuseCase: (userId) =>
+    api.get(`/cases/${userId}`),
+
+  decideAbuseCase: (userId, decision) =>
+    api.put(`/cases/${userId}/decide`, { decision })
 };
 
 export default adminApi;
