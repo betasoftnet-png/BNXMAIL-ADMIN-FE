@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Users from './pages/Users';
 import SystemControls from './pages/SystemControls';
 import AuditLogs from './pages/AuditLogs';
+import AbuseCases from './pages/AbuseCases';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="organizations" element={<div className="p-6">Organization Management Coming Soon</div>} />
+          <Route path="abuse-cases" element={<AbuseCases />} />
           <Route path="system-controls" element={<SystemControls />} />
           <Route path="apps" element={<div className="p-6">OAuth Apps Coming Soon</div>} />
           <Route path="audit-logs" element={<AuditLogs />} />

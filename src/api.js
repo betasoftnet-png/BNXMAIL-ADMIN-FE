@@ -27,8 +27,11 @@ const adminApi = {
   delete: (url, config) => api.delete(url, config),
 
   // --- Specific Helpers ---
-  searchUsers: (query, page = 0, size = 10) => 
-    api.get(`/users?query=${query || ''}&page=${page}&size=${size}`),
+  getUsers: (page, limit, query = '') => 
+    api.get(`/users?page=${page}&size=${limit}&query=${encodeURIComponent(query)}`),
+
+  getBannedUsers: (page, limit) => 
+    api.get(`/users/banned?page=${page}&size=${limit}`),
     
   toggleUserStatus: (id) => 
     api.put(`/users/${id}/status`),
