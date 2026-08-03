@@ -40,7 +40,19 @@ const adminApi = {
     api.get(`/cases/${userId}`),
 
   decideAbuseCase: (userId, decision) =>
-    api.put(`/cases/${userId}/decide`, { decision })
+    api.put(`/cases/${userId}/decide`, { decision }),
+
+  sendGlobalBroadcast: (subject, message) =>
+    api.post(`/system/broadcast`, { subject, message }),
+
+  forceLogoutAll: () =>
+    api.post(`/system/force-logout-all`),
+
+  getSystemSettings: () =>
+    api.get(`/system/settings`),
+    
+  updateSystemSettings: (settings) =>
+    api.put(`/system/settings`, settings)
 };
 
 export default adminApi;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Building2, Server, AppWindow, ShieldAlert, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, Server, AppWindow, ShieldAlert, LogOut, Menu, X, Settings } from 'lucide-react';
 import betaLogo from '../assets/beta2.png'
 
 const AdminLayout = () => {
@@ -17,7 +17,7 @@ const AdminLayout = () => {
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Users', path: '/users', icon: Users },
     { name: 'Organizations', path: '/organizations', icon: Building2 },
-    { name: 'Mail Servers', path: '/mail-servers', icon: Server },
+    { name: 'System Controls', path: '/system-controls', icon: Settings },
     { name: 'OAuth Apps', path: '/apps', icon: AppWindow },
     { name: 'Audit Logs', path: '/audit-logs', icon: ShieldAlert },
   ];
