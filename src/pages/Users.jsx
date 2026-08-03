@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Ban, LogOut, CheckCircle, XCircle, MoreVertical, Loader2, UserX, Scale, Key } from 'lucide-react';
+import { Search, Ban, LogOut, CheckCircle, XCircle, MoreVertical, Loader2, UserX, Scale, Key, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import adminApi from '../api';
 import CaseReviewModal from '../components/CaseReviewModal';
@@ -11,6 +11,11 @@ const Users = () => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [actionLoading, setActionLoading] = useState(null);
+  const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [resetTargetUser, setResetTargetUser] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
   const [reviewUserId, setReviewUserId] = useState(null);
 
   const fetchUsers = async () => {
@@ -56,23 +61,42 @@ const Users = () => {
     }
   };
 
-  const handleResetPassword = async (userId) => {
-    const newPassword = window.prompt("Enter the new password for this user (minimum 6 characters):");
-    if (!newPassword) return;
-    if (newPassword.length < 6) {
-      alert("Password must be at least 6 characters long.");
+  const openResetModal = (user) => {
+    setResetTargetUser(user);
+    setNewPassword('');
+    setPasswordError('');
+    setShowPassword(false);
+    setResetModalOpen(true);
+  };
+
+  const validatePassword = (pwd) => {
+    if (pwd.length < 8) return "Password must be at least 8 characters long.";
+    if (!/[A-Z]/.test(pwd)) return "Password must contain at least one uppercase letter.";
+    if (!/[a-z]/.test(pwd)) return "Password must contain at least one lowercase letter.";
+    if (!/[0-9]/.test(pwd)) return "Password must contain at least one number.";
+    return null;
+  };
+
+  const submitResetPassword = async () => {
+    const error = validatePassword(newPassword);
+    if (error) {
+      setPasswordError(error);
       return;
     }
 
-    if (!window.confirm("Are you sure? This will immediately log the user out of all sessions and require them to log in with the new password.")) return;
+    if (!window.confirm(`Are you sure you want to reset the password for ${resetTargetUser.email}? This will log them out of all active sessions.`)) {
+      return;
+    }
 
-    setActionLoading(`reset-${userId}`);
+    setActionLoading(`reset-${resetTargetUser.id}`);
     try {
-      await adminApi.resetPasswordUser(userId, newPassword);
+      await adminApi.resetPasswordUser(resetTargetUser.id, newPassword);
+      setResetModalOpen(false);
+      setResetTargetUser(null);
       alert("Password has been successfully reset.");
     } catch (err) {
       console.error("Failed to reset password", err);
-      alert(err.response?.data?.error || "Failed to reset password.");
+      setPasswordError(err.response?.data?.error || "Failed to reset password.");
     } finally {
       setActionLoading(null);
     }
@@ -210,7 +234,7 @@ const Users = () => {
                       </button>
 
                       <button 
-                        onClick={() => handleResetPassword(user.id)}
+                        onClick={() => openResetModal(user)}
                         disabled={actionLoading === `reset-${user.id}`}
                         className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-colors"
                       >
@@ -252,6 +276,80 @@ const Users = () => {
           </div>
         )}
       </div>
+      {/* Reset Password Modal */}
+      {resetModalOpen && resetTargetUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden"
+          >
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Reset Password</h3>
+              <button 
+                onClick={() => setResetModalOpen(false)}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="px-6 py-6">
+              <p className="text-sm text-gray-500 mb-4">
+                Set a new password for <span className="font-medium text-gray-900">{resetTargetUser.email}</span>.
+              </p>
+              
+              <div className="relative mb-2">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                    setPasswordError('');
+                  }}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              
+              {passwordError && (
+                <p className="text-sm text-red-500 mb-2">{passwordError}</p>
+              )}
+              
+              <ul className="text-xs text-gray-500 list-disc pl-5 mt-4 space-y-1">
+                <li className={newPassword.length >= 8 ? "text-green-600" : ""}>At least 8 characters</li>
+                <li className={/[A-Z]/.test(newPassword) ? "text-green-600" : ""}>At least one uppercase letter</li>
+                <li className={/[a-z]/.test(newPassword) ? "text-green-600" : ""}>At least one lowercase letter</li>
+                <li className={/[0-9]/.test(newPassword) ? "text-green-600" : ""}>At least one number</li>
+              </ul>
+            </div>
+            
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+              <button
+                onClick={() => setResetModalOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitResetPassword}
+                disabled={actionLoading === `reset-${resetTargetUser.id}`}
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {actionLoading === `reset-${resetTargetUser.id}` ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
+                Reset Password
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
