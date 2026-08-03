@@ -45,8 +45,8 @@ const adminApi = {
   sendGlobalBroadcast: (subject, message) =>
     api.post(`/system/broadcast`, { subject, message }),
 
-  forceLogoutAll: () =>
-    api.post(`/system/force-logout-all`),
+  forceLogoutByEmail: (email) =>
+    api.post(`/system/force-logout-by-email`, { email }),
 
   getSystemSettings: () =>
     api.get(`/system/settings`),

@@ -8,6 +8,7 @@ const SystemControls = () => {
   const [message, setMessage] = useState('');
   const [loadingBroadcast, setLoadingBroadcast] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
+  const [logoutEmail, setLogoutEmail] = useState('');
   const [broadcastStatus, setBroadcastStatus] = useState(null);
 
   const [settings, setSettings] = useState({
@@ -66,20 +67,21 @@ const SystemControls = () => {
     }
   };
 
-  const handleForceLogoutAll = async () => {
-    const confirm1 = window.confirm("WARNING: This will instantly log out every single user on the platform. Proceed?");
+  const handleTargetedForceLogout = async (e) => {
+    e.preventDefault();
+    if (!logoutEmail.trim()) return;
+
+    const confirm1 = window.confirm(`WARNING: This will instantly log out ${logoutEmail} from all devices. Proceed?`);
     if (!confirm1) return;
-    
-    const confirm2 = window.confirm("Are you absolutely sure? This is a highly disruptive action.");
-    if (!confirm2) return;
 
     setLoadingLogout(true);
     try {
-      await adminApi.forceLogoutAll();
-      alert("GLOBAL LOGOUT EXECUTED. All active sessions have been destroyed.");
+      await adminApi.forceLogoutByEmail(logoutEmail);
+      alert(`TARGETED LOGOUT EXECUTED. All active sessions for ${logoutEmail} have been destroyed.`);
+      setLogoutEmail('');
     } catch (err) {
       console.error("Force logout failed:", err);
-      alert("Failed to execute global logout.");
+      alert(err.response?.data?.message || "Failed to execute targeted logout.");
     } finally {
       setLoadingLogout(false);
     }
@@ -240,20 +242,30 @@ const SystemControls = () => {
           <div className="p-6">
             <div className="p-4 border border-rose-200 bg-rose-50 rounded-xl mb-6">
               <h4 className="font-semibold text-rose-800 flex items-center gap-2 mb-2">
-                <AlertOctagon className="w-4 h-4" /> The Nuclear Option
+                <AlertOctagon className="w-4 h-4" /> Targeted Force Logout
               </h4>
               <p className="text-sm text-rose-700 mb-4">
-                Instantly destroy all active sessions globally. Every user on the platform will be logged out and forced to re-authenticate. Use only during severe security breaches.
+                Instantly destroy all active sessions for a specific user across all devices. They will be forced to re-authenticate.
               </p>
               
-              <button 
-                onClick={handleForceLogoutAll}
-                disabled={loadingLogout}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 disabled:bg-rose-400 text-white font-medium rounded-lg transition-colors shadow-sm"
-              >
-                {loadingLogout ? <Loader2 className="w-5 h-5 animate-spin" /> : <AlertOctagon className="w-5 h-5" />}
-                EXECUTE GLOBAL LOGOUT
-              </button>
+              <form onSubmit={handleTargetedForceLogout} className="space-y-3">
+                <input 
+                  type="text" 
+                  required
+                  placeholder="Enter username or email"
+                  value={logoutEmail}
+                  onChange={(e) => setLogoutEmail(e.target.value)}
+                  className="w-full px-3 py-2 bg-white border border-rose-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                />
+                <button 
+                  type="submit"
+                  disabled={loadingLogout || !logoutEmail.trim()}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 disabled:bg-rose-400 text-white font-medium rounded-lg transition-colors shadow-sm"
+                >
+                  {loadingLogout ? <Loader2 className="w-5 h-5 animate-spin" /> : <AlertOctagon className="w-5 h-5" />}
+                  EXECUTE TARGETED LOGOUT
+                </button>
+              </form>
             </div>
           </div>
         </motion.div>
