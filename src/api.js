@@ -27,17 +27,17 @@ const adminApi = {
   delete: (url, config) => api.delete(url, config),
 
   // --- Specific Helpers ---
-  getUsers: (page = 0, size = 10, query = '') => 
-    api.get(`/users`, { params: { page, size, query } }),
+  searchUsers: (query, page = 0, size = 10) => 
+    api.get(`/users?query=${query || ''}&page=${page}&size=${size}`),
     
-  toggleUserStatus: (userId) => 
-    api.put(`/users/${userId}/status`),
+  toggleUserStatus: (id) => 
+    api.put(`/users/${id}/status`),
     
-  forceLogoutUser: (userId) => 
-    api.post(`/users/${userId}/logout`),
+  forceLogoutUser: (id) => 
+    api.post(`/users/${id}/logout`),
 
-  getAbuseCase: (userId) =>
-    api.get(`/cases/${userId}`),
+  getAbuseCase: (id) =>
+    api.get(`/cases/${id}`),
 
   decideAbuseCase: (userId, decision) =>
     api.put(`/cases/${userId}/decide`, { decision }),
@@ -52,7 +52,10 @@ const adminApi = {
     api.get(`/system/settings`),
     
   updateSystemSettings: (settings) =>
-    api.put(`/system/settings`, settings)
+    api.put(`/system/settings`, settings),
+
+  getAuditLogs: (query, page = 0, size = 10) =>
+    api.get(`/audit-logs?query=${query || ''}&page=${page}&size=${size}`)
 };
 
 export default adminApi;
