@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Ban, LogOut, CheckCircle, XCircle, MoreVertical, Loader2, UserX, Scale } from 'lucide-react';
+import { Search, Ban, LogOut, CheckCircle, XCircle, MoreVertical, Loader2, UserX, Scale, Key } from 'lucide-react';
 import { motion } from 'framer-motion';
 import adminApi from '../api';
 import CaseReviewModal from '../components/CaseReviewModal';
@@ -51,6 +51,28 @@ const Users = () => {
       alert("User has been forcefully logged out of all devices.");
     } catch (err) {
       console.error("Failed to force logout", err);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleResetPassword = async (userId) => {
+    const newPassword = window.prompt("Enter the new password for this user (minimum 6 characters):");
+    if (!newPassword) return;
+    if (newPassword.length < 6) {
+      alert("Password must be at least 6 characters long.");
+      return;
+    }
+
+    if (!window.confirm("Are you sure? This will immediately log the user out of all sessions and require them to log in with the new password.")) return;
+
+    setActionLoading(`reset-${userId}`);
+    try {
+      await adminApi.resetPasswordUser(userId, newPassword);
+      alert("Password has been successfully reset.");
+    } catch (err) {
+      console.error("Failed to reset password", err);
+      alert(err.response?.data?.error || "Failed to reset password.");
     } finally {
       setActionLoading(null);
     }
@@ -185,6 +207,19 @@ const Users = () => {
                           <UserX className="w-3 h-3 mr-1" />
                         )}
                         Force Logout
+                      </button>
+
+                      <button 
+                        onClick={() => handleResetPassword(user.id)}
+                        disabled={actionLoading === `reset-${user.id}`}
+                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-colors"
+                      >
+                        {actionLoading === `reset-${user.id}` ? (
+                          <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                        ) : (
+                          <Key className="w-3 h-3 mr-1" />
+                        )}
+                        Reset Password
                       </button>
                     </td>
                   </tr>

@@ -36,6 +36,9 @@ const adminApi = {
   forceLogoutUser: (id) => 
     api.post(`/users/${id}/logout`),
 
+  resetPasswordUser: (id, newPassword) =>
+    api.post(`/users/${id}/reset-password`, { newPassword }),
+
   getAbuseCase: (id) =>
     api.get(`/cases/${id}`),
 
