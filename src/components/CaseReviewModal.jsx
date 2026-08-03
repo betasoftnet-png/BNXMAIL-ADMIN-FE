@@ -62,7 +62,14 @@ const CaseReviewModal = ({ userId, isOpen, onClose, onDecisionMade }) => {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-slate-900">Abuse Case Review</h2>
-                <p className="text-xs text-slate-500 font-mono">User ID: {userId}</p>
+                {caseData.reportedUserEmail ? (
+                  <p className="text-sm font-medium text-slate-600 mt-0.5">
+                    User: <span className="text-blue-600">{caseData.reportedUserEmail}</span> 
+                    <span className="text-slate-400 ml-2 text-xs">({caseData.reportedUserName})</span>
+                  </p>
+                ) : (
+                  <p className="text-xs text-slate-500 font-mono mt-0.5">User ID: {userId}</p>
+                )}
               </div>
             </div>
             <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 transition-colors">

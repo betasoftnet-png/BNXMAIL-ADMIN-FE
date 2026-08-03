@@ -105,18 +105,9 @@ const AbuseCases = () => {
                     </td>
                     <td className="px-6 py-4">
                       {user.reportCount > 0 ? (
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium text-rose-600 mb-1">
-                            {user.reportCount} Report{user.reportCount > 1 ? 's' : ''}
-                          </span>
-                          {user.reports && user.reports[0] && (
-                            <div className="text-xs text-gray-500">
-                              <span className="font-medium">Latest By:</span> {user.reports[0].reporterEmail} <br/>
-                              <span className="font-medium">Subject:</span> "{user.reports[0].emailSubject || 'N/A'}" <br/>
-                              <span className="font-medium">Reason:</span> {user.reports[0].reason}
-                            </div>
-                          )}
-                        </div>
+                        <span className="text-sm font-medium text-rose-600">
+                          {user.reportCount} Report{user.reportCount > 1 ? 's' : ''}
+                        </span>
                       ) : (
                         <span className="text-sm text-gray-500">No reports</span>
                       )}

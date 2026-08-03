@@ -17,7 +17,6 @@ const AdminLayout = () => {
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Users', path: '/users', icon: Users },
     { name: 'Organizations', path: '/organizations', icon: Building2 },
-    { name: 'All Reports', path: '/reports', icon: Flag },
     { name: 'Abuse Cases', path: '/abuse-cases', icon: Scale },
     { name: 'System Controls', path: '/system-controls', icon: Settings },
     { name: 'OAuth Apps', path: '/apps', icon: AppWindow },
