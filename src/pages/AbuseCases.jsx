@@ -52,8 +52,9 @@ const AbuseCases = () => {
       {reviewUserId && (
         <CaseReviewModal 
           userId={reviewUserId} 
+          isOpen={true}
           onClose={() => setReviewUserId(null)}
-          onDecisionComplete={handleDecisionComplete}
+          onDecisionMade={handleDecisionComplete}
         />
       )}
 
