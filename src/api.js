@@ -32,6 +32,9 @@ const adminApi = {
 
   getBannedUsers: (page, limit) => 
     api.get(`/users/banned?page=${page}&size=${limit}`),
+
+  getAllReports: (page, limit) => 
+    api.get(`/reports?page=${page}&size=${limit}`),
     
   toggleUserStatus: (id) => 
     api.put(`/users/${id}/status`),
