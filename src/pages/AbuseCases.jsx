@@ -70,7 +70,7 @@ const AbuseCases = () => {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Account Type</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Reports</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
@@ -104,9 +104,22 @@ const AbuseCases = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        {user.accountType}
-                      </span>
+                      {user.reportCount > 0 ? (
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-rose-600 mb-1">
+                            {user.reportCount} Report{user.reportCount > 1 ? 's' : ''}
+                          </span>
+                          {user.reports && user.reports[0] && (
+                            <div className="text-xs text-gray-500">
+                              <span className="font-medium">Latest By:</span> {user.reports[0].reporterEmail} <br/>
+                              <span className="font-medium">Subject:</span> "{user.reports[0].emailSubject || 'N/A'}" <br/>
+                              <span className="font-medium">Reason:</span> {user.reports[0].reason}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-500">No reports</span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
