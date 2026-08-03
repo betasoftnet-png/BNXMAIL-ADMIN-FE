@@ -57,7 +57,7 @@ const Users = () => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Case Review Modal */}
       <CaseReviewModal 
         userId={reviewUserId} 
@@ -66,12 +66,12 @@ const Users = () => {
         onDecisionMade={fetchUsers}
       />
 
-      <div className="flex justify-between items-end mb-8">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
           <p className="text-slate-500 mt-1">Search, suspend, and manage all BNX Mail users.</p>
         </div>
-        <div className="relative w-72">
+        <div className="relative w-full md:w-72">
           <input
             type="text"
             placeholder="Search email or name..."
