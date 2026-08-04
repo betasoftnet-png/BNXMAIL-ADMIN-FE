@@ -21,7 +21,7 @@ const Users = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await adminApi.searchUsers(query, page, 10);
+      const response = await adminApi.getUsers(page, 10, query);
       setUsers(response.data.data.content);
       setTotalPages(response.data.data.totalPages);
     } catch (err) {
