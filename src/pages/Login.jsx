@@ -17,6 +17,15 @@ const Login = () => {
     setError('');
 
     try {
+      const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || 'admin@bnxmail.com';
+      const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '1234';
+
+      if (email !== adminEmail || password !== adminPassword) {
+        setError('Invalid credentials or insufficient permissions.');
+        setIsLoading(false);
+        return;
+      }
+
       const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.bnxmail.com';
       const response = await axios.post(`${API_BASE}/api/auth/login`, { 
           email, 
@@ -24,7 +33,7 @@ const Login = () => {
       });
       
       const token = response.data.data.accessToken;
-      localStorage.setItem('bnx_admin_token', token);
+      sessionStorage.setItem('bnx_admin_token', token);
       navigate('/');
     } catch (err) {
       console.error(err);

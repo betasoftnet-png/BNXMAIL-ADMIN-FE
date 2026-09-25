@@ -11,7 +11,7 @@ const api = axios.create({
 
 // Interceptor to attach the admin token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('bnx_admin_token');
+  const token = sessionStorage.getItem('bnx_admin_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

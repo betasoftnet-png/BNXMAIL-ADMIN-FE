@@ -9,7 +9,7 @@ const AdminLayout = () => {
 
   const handleLogout = () => {
     // Basic logout logic to be implemented with auth context
-    localStorage.removeItem('bnx_admin_token');
+    sessionStorage.removeItem('bnx_admin_token');
     navigate('/login');
   };
 
@@ -22,6 +22,16 @@ const AdminLayout = () => {
     { name: 'OAuth Apps', path: '/apps', icon: AppWindow },
     { name: 'Audit Logs', path: '/audit-logs', icon: ShieldAlert },
   ];
+
+  React.useEffect(() => {
+    if (!sessionStorage.getItem('bnx_admin_token')) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  if (!sessionStorage.getItem('bnx_admin_token')) {
+    return null; // Return null while redirecting
+  }
 
   return (
     <div className="flex h-screen bg-slate-50">
